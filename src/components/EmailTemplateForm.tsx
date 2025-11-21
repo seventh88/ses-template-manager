@@ -127,6 +127,8 @@ const EmailTemplateForm: React.FC = () => {
             isOpen={showSendEmailDialog}
             onClose={() => setShowSendEmailDialog(false)}
             templateName={id!}
+            htmlPart={formData.HtmlPart}
+            textPart={formData.TextPart}
           />
         </>
       )}

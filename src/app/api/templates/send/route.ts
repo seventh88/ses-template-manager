@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SESClient, SendTemplatedEmailCommand } from '@aws-sdk/client-ses';
+import {
+    SESClient,
+    SendTemplatedEmailCommand,
+    SendTemplatedEmailCommandInput,
+} from '@aws-sdk/client-ses';
 import { AuthMiddleware } from '@/lib/auth-middleware';
 
 // Initialize SES client
@@ -16,6 +20,7 @@ interface SendTemplatedEmailRequest {
     source: string;
     to: string[];
     templateData?: Record<string, unknown>;
+    configurationSetName?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -34,7 +39,13 @@ export async function POST(request: NextRequest) {
         }
 
         const body: SendTemplatedEmailRequest = await request.json();
-        const { templateName, source, to, templateData = {} } = body;
+        const {
+            templateName,
+            source,
+            to,
+            templateData = {},
+            configurationSetName,
+        } = body;
 
         // Validate required fields
         if (!templateName || !source || !to || to.length === 0) {
@@ -65,14 +76,21 @@ export async function POST(request: NextRequest) {
         }
 
         // Send templated email using SES
-        const command = new SendTemplatedEmailCommand({
+        const commandParams: SendTemplatedEmailCommandInput = {
             Source: source,
             Destination: {
                 ToAddresses: to,
             },
             Template: templateName,
             TemplateData: JSON.stringify(templateData),
-        });
+        };
+
+        // Add configuration set if provided
+        if (configurationSetName) {
+            commandParams.ConfigurationSetName = configurationSetName;
+        }
+
+        const command = new SendTemplatedEmailCommand(commandParams);
 
         const result = await sesClient.send(command);
 

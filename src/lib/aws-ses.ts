@@ -88,7 +88,8 @@ export const sendTemplatedEmail = async (
     templateName: string,
     source: string,
     to: string[],
-    templateData: Record<string, unknown> = {}
+    templateData: Record<string, unknown> = {},
+    configurationSetName?: string
 ): Promise<string> => {
     try {
         const response = await apiClient.post<{ messageId: string }>(
@@ -98,6 +99,7 @@ export const sendTemplatedEmail = async (
                 source,
                 to,
                 templateData,
+                configurationSetName,
             }
         );
         return response.messageId;
