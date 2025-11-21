@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
             requireApiKey: false,
             requireSession: true,
             validateOrigin: false,
-            validateAwsCredentials: true
+            validateAwsCredentials: true,
         });
 
         if (!authResult.success) {
@@ -39,7 +39,9 @@ export async function POST(request: NextRequest) {
         // Validate required fields
         if (!templateName || !source || !to || to.length === 0) {
             return NextResponse.json(
-                { error: 'Template name, source email, and recipient email(s) are required' },
+                {
+                    error: 'Template name, source email, and recipient email(s) are required',
+                },
                 { status: 400 }
             );
         }
@@ -76,12 +78,11 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({
             messageId: result.MessageId,
-            success: true
+            success: true,
         });
-
     } catch (error) {
         console.error('Error sending templated email:', error);
-        
+
         // Handle specific SES errors
         if (error instanceof Error) {
             if (error.name === 'TemplateDoesNotExist') {
@@ -92,7 +93,9 @@ export async function POST(request: NextRequest) {
             }
             if (error.name === 'MessageRejected') {
                 return NextResponse.json(
-                    { error: 'Email was rejected. Please check your SES sending limits and email addresses.' },
+                    {
+                        error: 'Email was rejected. Please check your SES sending limits and email addresses.',
+                    },
                     { status: 400 }
                 );
             }
