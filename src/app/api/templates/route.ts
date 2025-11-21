@@ -91,7 +91,6 @@ export async function GET(request: NextRequest) {
                         SubjectPart: template.SubjectPart || '',
                         HtmlPart: template.HtmlPart || '',
                         TextPart: template.TextPart || '',
-                        ConfigurationSetName: 'default-config',
                         createdAt: templateMeta.CreatedTimestamp || new Date(),
                         updatedAt: templateMeta.CreatedTimestamp || new Date(),
                     };
